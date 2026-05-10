@@ -29,7 +29,8 @@ ARG OPENCLAW_BUN_IMAGE="oven/bun:1.3.13@sha256:87416c977a612a204eb54ab9f3927023c
 FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS ext-deps
 ARG OPENCLAW_EXTENSIONS
 ARG OPENCLAW_BUNDLED_PLUGIN_DIR
-# Copy package.json for opted-in extensions so pnpm resolves their deps.
+# Copy the bundled plugin directory from the build context, then extract
+# only the package.json files for opted-in extensions.
 COPY ${OPENCLAW_BUNDLED_PLUGIN_DIR}/ /tmp/${OPENCLAW_BUNDLED_PLUGIN_DIR}/
 RUN mkdir -p /out && \
     for ext in $(printf '%s\n' "$OPENCLAW_EXTENSIONS" | tr ',' ' '); do \
