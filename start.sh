@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Create OpenClaw config directory
-mkdir -p /root/.openclaw
+# Create config directory for node user
+mkdir -p /home/node/.openclaw
 
-# Write config file using Railway environment variables
-cat > /root/.openclaw/config.json << EOF
+# Write config file
+cat > /home/node/.openclaw/config.json << EOF
 {
   "channels": {
     "discord": {
-      "token": "$DISCORD_TOKEN",
+      "token": "$MTUwMjYyNTcwNzI5NjI5MjkwNA.GV2Ny9.crSL6GK2Qse7bZSjykT07SdiFf8Q5eBP9d4bHY",
       "dmPolicy": "open"
     }
   },
@@ -16,12 +16,12 @@ cat > /root/.openclaw/config.json << EOF
     "default": "deepseek/deepseek-chat"
   },
   "keys": {
-    "deepseek": "$DEEPSEEK_API_KEY"
+    "deepseek": "$sk-66bfb8d85ce44abc98f9aa12c069dd31"
   }
 }
 EOF
 
-echo "✅ Config created successfully"
+echo "✅ Config written to /home/node/.openclaw/config.json"
 
 # Start OpenClaw
-openclaw gateway start --port 8080
+node openclaw.mjs gateway --allow-unconfigured
