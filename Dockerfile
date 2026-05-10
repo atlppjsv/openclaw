@@ -289,4 +289,6 @@ USER node
 HEALTHCHECK --interval=3m --timeout=10s --start-period=15s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 ENTRYPOINT ["tini", "-s", "--"]
-CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
+COPY start.sh /home/node/start.sh
+RUN chmod +x /home/node/start.sh
+CMD ["/home/node/start.sh"]
