@@ -1,9 +1,11 @@
 #!/bin/bash
-echo "✅ Writing correct openclaw.json config..."
+echo "✅ Writing openclaw.json to /tmp..."
 
-mkdir -p /home/node/.openclaw
+# Use /tmp to avoid Railway volume override
+export HOME=/tmp
+mkdir -p /tmp/.openclaw
 
-cat > /home/node/.openclaw/openclaw.json << ENDOFCONFIG
+cat > /tmp/.openclaw/openclaw.json << ENDOFCONFIG
 {
   "agents": {
     "defaults": {
@@ -49,5 +51,7 @@ cat > /home/node/.openclaw/openclaw.json << ENDOFCONFIG
 }
 ENDOFCONFIG
 
-echo "✅ Config written!"
+echo "✅ Config written to /tmp/.openclaw/openclaw.json"
+cat /tmp/.openclaw/openclaw.json
+
 node openclaw.mjs gateway --allow-unconfigured
