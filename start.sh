@@ -1,26 +1,53 @@
 #!/bin/bash
-echo "🔍 Checking environment variables..."
-echo "DISCORD_TOKEN length: ${#DISCORD_TOKEN}"
-echo "DEEPSEEK_API_KEY length: ${#DEEPSEEK_API_KEY}"
+echo "✅ Writing correct openclaw.json config..."
 
 mkdir -p /home/node/.openclaw
 
-cat > /home/node/.openclaw/config.json << ENDOFCONFIG
+cat > /home/node/.openclaw/openclaw.json << ENDOFCONFIG
 {
-  "channels": {
-    "discord": {
-      "token": "${DISCORD_TOKEN}",
-      "dmPolicy": "open"
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "deepseek/deepseek-chat"
+      }
     }
   },
-  "models": {
-    "default": "deepseek/deepseek-chat"
+  "gateway": {
+    "auth": {
+      "mode": "token",
+      "token": "railway-openclaw-token-2026"
+    },
+    "bind": "lan",
+    "mode": "local",
+    "port": 18789
   },
-  "keys": {
-    "deepseek": "${DEEPSEEK_API_KEY}"
+  "models": {
+    "providers": {
+      "deepseek": {
+        "baseUrl": "https://api.deepseek.com",
+        "api": "openai-completions",
+        "apiKey": "${DEEPSEEK_API_KEY}"
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "discord": { "enabled": true },
+      "deepseek": { "enabled": true }
+    }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "${DISCORD_TOKEN}",
+      "dmPolicy": "open",
+      "groupPolicy": "open",
+      "allowFrom": ["*"],
+      "dm": { "enabled": true }
+    }
   }
 }
 ENDOFCONFIG
 
 echo "✅ Config written!"
-node openclaw.mjs gateway --allow-unconfigured --bind lan
+node openclaw.mjs gateway --allow-unconfigured
