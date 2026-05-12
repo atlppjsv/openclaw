@@ -1,16 +1,15 @@
 #!/bin/bash
-echo "=== Writing config with Node.js ==="
+echo "=== OpenClaw Gateway Help ==="
+node openclaw.mjs gateway --help 2>&1
 
+echo "=== Writing config ==="
 node -e "
 const fs = require('fs');
-
 const config = {
   agents: { defaults: { model: { primary: 'deepseek/deepseek-chat' } } },
   gateway: {
     auth: { mode: 'token', token: 'openclaw-railway-2026' },
-    bind: 'lan',
-    mode: 'local',
-    port: 18789
+    bind: 'lan', mode: 'local', port: 18789
   },
   models: {
     providers: {
@@ -33,14 +32,10 @@ const config = {
     }
   }
 };
-
 fs.mkdirSync('/home/node/.openclaw', { recursive: true });
 fs.writeFileSync('/home/node/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
-console.log('✅ Config written!');
-console.log('Discord token set:', !!process.env.DISCORD_TOKEN);
-console.log('DeepSeek key set:', !!process.env.DEEPSEEK_API_KEY);
-console.log('Files:', fs.readdirSync('/home/node/.openclaw'));
+console.log('✅ Done');
 "
 
 echo "=== Starting OpenClaw ==="
-node openclaw.mjs gateway --allow-unconfigured
+node openclaw.mjs gateway --allow-unconfigured --bind lan
