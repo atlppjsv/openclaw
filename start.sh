@@ -1,15 +1,34 @@
 #!/bin/bash
-echo "=== OpenClaw Gateway Help ==="
-node openclaw.mjs gateway --help 2>&1
+echo "=== Setting up OpenClaw ==="
 
-echo "=== Writing config ==="
+# Create both config directories
+mkdir -p /data/.openclaw
+mkdir -p /home/node/.openclaw
+
+# Clear old backup files that may override our config
+rm -f /home/node/.openclaw/openclaw.json.bak*
+rm -f /home/node/.openclaw/openclaw.json.last-good
+
+# Write config using Node.js to BOTH locations
 node -e "
 const fs = require('fs');
+
 const config = {
-  agents: { defaults: { model: { primary: 'deepseek/deepseek-chat' } } },
+  agents: {
+    defaults: {
+      model: { primary: 'deepseek/deepseek-chat' },
+      workspace: '/data/.openclaw/workspace'
+    }
+  },
   gateway: {
     auth: { mode: 'token', token: 'openclaw-railway-2026' },
-    bind: 'lan', mode: 'local', port: 18789
+    bind: 'lan',
+    mode: 'local',
+    port: 18789
+  },
+  meta: {
+    lastTouchedAt: new Date().toISOString(),
+    lastTouchedVersion: '2026.5.6'
   },
   models: {
     providers: {
@@ -20,7 +39,18 @@ const config = {
       }
     }
   },
-  plugins: { entries: { discord: { enabled: true }, deepseek: { enabled: true } } },
+  plugins: {
+    entries: {
+      discord: { enabled: true },
+      deepseek: { enabled: true }
+    }
+  },
+  session: { dmScope: 'per-channel-peer' },
+  auth: {
+    profiles: {
+      'deepseek:default': { provider: 'deepseek', mode: 'api_key' }
+    }
+  },
   channels: {
     discord: {
       enabled: true,
@@ -32,9 +62,12 @@ const config = {
     }
   }
 };
-fs.mkdirSync('/home/node/.openclaw', { recursive: true });
-fs.writeFileSync('/home/node/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
-console.log('✅ Done');
+
+const json = JSON.stringify(config, null, 2);
+fs.writeFileSync('/data/.openclaw/openclaw.json', json);
+fs.writeFileSync('/home/node/.openclaw/openclaw.json', json);
+console.log('✅ Config written to both locations!');
+console.log('Discord token:', !!process.env.DISCORD_TOKEN);
 "
 
 echo "=== Starting OpenClaw ==="
