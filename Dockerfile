@@ -268,6 +268,7 @@ RUN ln -sf /app/openclaw.mjs /usr/local/bin/openclaw \
 # here inherit node ownership instead of root-owned state.
 RUN install -d -m 0700 -o node -g node /home/node/.openclaw && \
     stat -c '%U:%G %a' /home/node/.openclaw | grep -qx 'node:node 700'
+RUN mkdir -p /data/.openclaw && chown -R node:node /data && chmod -R 755 /data
 
 # Copy start script as root BEFORE switching to node user
 COPY start.sh /usr/local/bin/start.sh
