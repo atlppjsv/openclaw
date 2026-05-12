@@ -23,10 +23,4 @@ cat > /home/node/.openclaw/config.json << ENDOFCONFIG
 ENDOFCONFIG
 
 echo "✅ Config written!"
-echo "📁 Files in .openclaw:"
-ls -la /home/node/.openclaw/
-echo "📄 Config file:"
-cat /home/node/.openclaw/config.json
-
-# Start WITHOUT --allow-unconfigured so it reads our config
-node openclaw.mjs gateway
+node openclaw.mjs gateway --allow-unconfigured --bind lan
